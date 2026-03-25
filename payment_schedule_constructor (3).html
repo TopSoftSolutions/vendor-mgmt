@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Schedule Constructor — Berg Construction</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f4f5f7;
+    --surf: #ffffff;
+    --surf2: #f0f2f5;
+    --surf3: #e8eaed;
+    --border: rgba(0,0,0,0.10);
+    --border2: rgba(0,0,0,0.18);
+    --text: #1a1d23;
+    --text2: #4b5163;
+    --text3: #8b93a7;
+    --amber: #b06b10;
+    --amber-bg: #fef3e2;
+    --amber-lt: #f0a830;
+    --amber-mid: #e8950a;
+    --green: #2d6a1f;
+    --green-bg: #eaf6e4;
+    --green-lt: #5db843;
+    --red: #9b2121;
+    --red-bg: #fceaea;
+    --red-lt: #e04040;
+    --blue: #1450a0;
+    --blue-bg: #e8f0fc;
+    --blue-lt: #4080e0;
+    --purple: #4a3bb0;
+    --purple-bg: #eeedf8;
+    --teal: #0d6e58;
+    --teal-bg: #e0f5ef;
+    --pink: #8c2850;
+    --pink-bg: #f8e8ef;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+    --r: 6px;
+    --rl: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  body {
+    font-family: var(--font);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    height: 100vh;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+
+  /* ── SHELL ── */
+  .shell { display: grid; grid-template-rows: 52px 1fr; height: 100vh; }
+
+  /* ── HEADER ── */
+  .hdr {
+    background: var(--surf);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    box-shadow: var(--shadow);
+    z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+  .logo-m {
+    width: 28px; height: 28px;
+    background: var(--amber-mid);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #fff; font-weight: 700;
+  }
+  .hdr-div { width: 1px; height: 24px; background: var(--border); }
+  .steps { display: flex; gap: 2px; }
+  .sb {
+    padding: 5px 12px; border-radius: var(--r);
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    border: 1px solid transparent; background: transparent; color: var(--text3);
+    font-family: var(--font); transition: all .15s;
+    display: flex; align-items: center; gap: 6px;
+    letter-spacing: .03em; text-transform: uppercase; white-space: nowrap;
+  }
+  .sb:hover { background: var(--surf2); color: var(--text2); }
+  .sb.active { background: var(--amber-bg); border-color: var(--amber-lt); color: var(--amber); }
+  .sb.done { color: var(--green); }
+  .sn {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--surf3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+  .sb.active .sn { background: var(--amber-mid); color: #fff; }
+  .sb.done .sn { background: var(--green-lt); color: #fff; }
+  .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .lsw {
+    display: flex; gap: 2px;
+    background: var(--surf2); border-radius: var(--r); padding: 2px;
+    border: 1px solid var(--border);
+  }
+  .lb {
+    padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    border: none; background: transparent; color: var(--text3);
+    font-family: var(--font); transition: all .15s;
+  }
+  .lb.on { background: var(--amber-mid); color: #fff; }
+
+  /* ── BODY ── */
+  .body { display: grid; grid-template-columns: 1fr 240px; height: calc(100vh - 52px); overflow: hidden; }
+
+  /* ── CONTENT ── */
+  .content { overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--surf);
+    border-left: 1px solid var(--border);
+    padding: 16px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 9px;
+  }
+  .sbt {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--text3);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .sbr { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; }
+  .sbl { font-size: 12px; color: var(--text2); }
+  .sbv { font-size: 13px; font-weight: 600; font-family: var(--mono); color: var(--text); }
+  .sbv.w { color: var(--amber); } .sbv.ok { color: var(--green); } .sbv.e { color: var(--red); }
+  .bar-o { background: var(--surf3); border-radius: 3px; height: 6px; margin-top: 3px; overflow: hidden; }
+  .bar-i { height: 100%; border-radius: 3px; transition: width .3s; }
+  .sb-div { height: 1px; background: var(--border); margin: 4px 0; }
+  .sb-spacer { flex: 1; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surf);
+    border: 1px solid var(--border);
+    border-radius: var(--rl);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .ct { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+
+  /* ── FORM ── */
+  .fg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fg3 { grid-template-columns: 1fr 1fr 1fr; }
+  .f { display: flex; flex-direction: column; gap: 4px; }
+  .f > label {
+    font-size: 10px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text3);
+  }
+  .f input, .f select {
+    background: var(--surf2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 7px 10px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    outline: none;
+    width: 100%;
+    transition: border-color .15s, background .15s;
+  }
+  .f input:focus, .f select:focus {
+    border-color: var(--amber-mid);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(232,149,10,0.10);
+  }
+  .f input[type="checkbox"] {
+    width: auto; accent-color: var(--amber-mid);
+    cursor: pointer; width: 15px; height: 15px;
+  }
+  .cbr { flex-direction: row; align-items: center; gap: 8px; }
+  .cbr > label { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; }
+
+  /* ── TEMPLATE GRID ── */
+  .tg { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 8px; margin-top: 10px; }
+  .tc {
+    background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 12px; cursor: pointer; transition: all .15s;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .tc:hover { border-color: var(--amber-lt); background: var(--amber-bg); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .tc.sel { border-color: var(--amber-mid); background: var(--amber-bg); box-shadow: 0 0 0 3px rgba(232,149,10,0.12); }
+  .ti { font-size: 22px; line-height: 1; }
+  .tn { font-size: 12px; font-weight: 600; color: var(--text); }
+  .ts { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+  .tc-steps { display: flex; flex-direction: column; gap: 2px; margin-top: 5px; }
+  .tc-step { font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+  .tc-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── APPLIED BADGE ── */
+  .applied-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: var(--r);
+    background: var(--green-bg); border: 1px solid var(--green-lt);
+    color: var(--green); font-size: 11px; font-weight: 600;
+    margin-top: 8px;
+  }
+  .quick-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ── PHASES ── */
+  .ph-list { display: flex; flex-direction: column; gap: 7px; }
+  .ph-item {
+    background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 10px; display: grid; grid-template-columns: 1fr 1fr 30px; gap: 8px; align-items: end;
+  }
+  .ph-valid {
+    font-size: 11px; padding: 6px 11px; border-radius: var(--r);
+    font-weight: 600; font-family: var(--mono); margin-top: 8px;
+  }
+  .ph-valid.ok { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-lt); }
+  .ph-valid.w { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-lt); }
+  .ph-valid.e { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-lt); }
+
+  /* ── BULK ROW ── */
+  .bulk-r {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 10px 12px; background: var(--surf); border: 1px solid var(--border);
+    border-radius: var(--r); box-shadow: var(--shadow);
+  }
+  .bk-lbl { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); white-space: nowrap; }
+  .bulk-r select, .bulk-r input[type="number"] {
+    background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 5px 8px; color: var(--text); font-family: var(--font); font-size: 12px; outline: none;
+  }
+  .bulk-r input[type="number"] { width: 52px; }
+
+  /* ── LINES LIST ── */
+  .ll { display: flex; flex-direction: column; gap: 7px; }
+  .pl {
+    background: var(--surf); border: 1px solid var(--border); border-radius: var(--rl);
+    overflow: hidden; transition: border-color .15s, box-shadow .15s;
+    box-shadow: var(--shadow);
+  }
+  .pl:hover { border-color: var(--border2); }
+  .pl.dov { border-color: var(--amber-mid); background: var(--amber-bg); }
+  .plh {
+    display: flex; align-items: center; padding: 9px 12px; gap: 8px;
+    cursor: pointer; background: var(--surf2); user-select: none;
+  }
+  .dh { color: var(--text3); cursor: grab; font-size: 13px; padding: 2px 4px; }
+  .dh:active { cursor: grabbing; }
+  .pn { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 18px; font-weight: 500; }
+  .pbadge {
+    display: flex; align-items: center; gap: 5px; padding: 3px 8px;
+    border-radius: 4px; font-size: 11px; font-weight: 600;
+    border-left: 3px solid; white-space: nowrap;
+  }
+  .pl-l { flex: 1; font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pl-s { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+  .pa { display: flex; gap: 3px; }
+  .pc { color: var(--text3); font-size: 11px; transition: transform .15s; flex-shrink: 0; }
+  .pc.op { transform: rotate(180deg); }
+  .plb { padding: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+  .inner-div { height: 1px; background: var(--border); margin: 2px 0; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 13px; border-radius: var(--r);
+    font-family: var(--font); font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); transition: all .15s;
+    line-height: 1;
+  }
+  .btn:hover { background: var(--surf2); color: var(--text); border-color: var(--border2); }
+  .btn:disabled { opacity: .4; cursor: default; pointer-events: none; }
+  .bp { background: var(--amber-bg); border-color: var(--amber-lt); color: var(--amber); }
+  .bp:hover { background: var(--amber-lt); color: #5a3200; }
+  .bsm { padding: 3px 9px; font-size: 11px; }
+  .bd { color: var(--red); border-color: transparent; background: transparent; }
+  .bd:hover { background: var(--red-bg); border-color: var(--red-lt); }
+
+  /* ── WATERFALL ── */
+  .wr { display: flex; align-items: center; margin-bottom: 5px; gap: 7px; }
+  .wl { width: 140px; font-size: 11px; color: var(--text2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
+  .wa { flex: 1; height: 16px; position: relative; background: var(--surf2); border-radius: 3px; overflow: hidden; }
+  .wb { height: 100%; border-radius: 3px; position: absolute; transition: width .3s; opacity: .75; }
+  .wp { font-family: var(--mono); font-size: 10px; color: var(--text3); min-width: 32px; text-align: right; }
+
+  /* ── PREVIEW TABLE ── */
+  .ptbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .ptbl th {
+    text-align: left; padding: 7px 8px;
+    font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text3); border-bottom: 1px solid var(--border);
+    background: var(--surf2);
+  }
+  .ptbl td { padding: 8px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .ptbl tr:last-child td { border-bottom: none; }
+  .ptbl tr:hover td { background: var(--surf2); }
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+
+  /* ── TAGS ── */
+  .tag { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 10px; font-weight: 700; font-family: var(--mono); }
+  .ta { background: var(--amber-bg); color: var(--amber); }
+  .tg2 { background: var(--green-bg); color: var(--green); }
+  .tb { background: var(--blue-bg); color: var(--blue); }
+
+  /* ── OVERLAY / MODAL ── */
+  .ov {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal {
+    background: var(--surf); border: 1px solid var(--border2); border-radius: var(--rl);
+    width: 600px; max-height: 82vh; overflow-y: auto; padding: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  }
+  .mh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .mt { font-size: 15px; font-weight: 600; }
+  .pg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pi {
+    background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r);
+    padding: 12px; cursor: pointer; transition: all .15s;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .pi:hover { border-color: var(--amber-lt); background: var(--amber-bg); transform: translateY(-1px); }
+  .pii { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .pin { font-size: 12px; font-weight: 600; color: var(--text); }
+  .piam { font-size: 10px; color: var(--text3); margin-top: 1px; }
+  .pid { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  /* ── SAVE MODAL ── */
+  .save-box {
+    width: 340px; padding: 20px; background: var(--surf);
+    border: 1px solid var(--border2); border-radius: var(--rl);
+    display: flex; flex-direction: column; gap: 14px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+  }
+
+  /* ── FOOTER NAV ── */
+  .fn { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center; padding: 48px 20px; color: var(--text3); font-size: 13px;
+    border: 1px dashed var(--border2); border-radius: var(--rl);
+    background: var(--surf);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surf2); }
+  ::-webkit-scrollbar-thumb { background: var(--surf3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+  select option { background: #fff; color: #1a1d23; }
+</style>
+</head>
+<body>
+<div class="shell" id="app"></div>
+
+<script>
+const LT=[
+  {code:"AdvancePayment",en:"Advance Payment",am:"Կankhavans Vchar",icon:"↑",color:"#b06b10",bg:"#fef3e2",fields:["pct","trigger","deduction"],dt:"ContractSigned",dc:"PercentOfContract"},
+  {code:"ProgressAct",en:"Progress Act",am:"Erkachneri Akt",icon:"📋",color:"#1450a0",bg:"#e8f0fc",fields:["trigger","retention","deductRate"],dt:"ActApproved",dc:"ActValue"},
+  {code:"MilestonePayment",en:"Milestone Payment",am:"Fazayin Vchar",icon:"🏁",color:"#4a3bb0",bg:"#eeedf8",fields:["pct","trigger","phase"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
+  {code:"InterimAdvance",en:"Interim Advance",am:"Mknday Kanкh",icon:"⏩",color:"#8c2850",bg:"#f8e8ef",fields:["pct","phase","trigger"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
+  {code:"BatchDeliveryPayment",en:"Batch Delivery",am:"Khtambay Vchar",icon:"📦",color:"#0d6e58",bg:"#e0f5ef",fields:["pct","trigger","fx"],dt:"GoodsDelivered",dc:"PercentOfContract"},
+  {code:"InstallationAct",en:"Installation Act",am:"Montaji Akt",icon:"🔧",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"InstallationCompleted",dc:"ActValue"},
+  {code:"RecurringMonthlyPayment",en:"Monthly Payment",am:"Amsakan Vchar",icon:"🔄",color:"#854F0B",bg:"#fef3e2",fields:["pct","months"],dt:"MonthElapsed",dc:"PercentOfContract"},
+  {code:"RetentionRelease",en:"Retention Release",am:"Pahelu Batsahanutyun",icon:"🔓",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"FinalAcceptance",dc:"RemainingBalance"},
+  {code:"FinalPayment",en:"Final Payment",am:"Verjin Vchar",icon:"✅",color:"#1450a0",bg:"#e8f0fc",fields:["pct","trigger"],dt:"FinalAcceptance",dc:"RemainingBalance"},
+  {code:"AdvanceRecovery",en:"Advance Recovery",am:"Канкх Vatsvets",icon:"↩",color:"#9b2121",bg:"#fceaea",fields:["fixed","trigger"],dt:"ActApproved",dc:"FixedAmount"},
+];
+const TRIGS=["ContractSigned","PhaseCompleted","ActApproved","GoodsDelivered","InstallationCompleted","FinalAcceptance","DLPExpired","MonthElapsed","DateReached"];
+const CALCS=["PercentOfContract","PercentOfPhase","FixedAmount","ActValue","RemainingBalance","PercentOfAct"];
+const DEDS=["Proportional","LumpSum","None"];
+const CURS=["AMD","USD","EUR"];
+const getLT=c=>LT.find(l=>l.code===c)||LT[0];
+const fmtC=(v,c)=>{
+  if(v===null||v===undefined||v==="")return"";
+  const n=Number(v);
+  if(c==="AMD")return n.toLocaleString("hy-AM")+" ֏";
+  if(c==="USD")return"$"+n.toLocaleString("en-US");
+  return"€"+n.toLocaleString("de-DE");
+};
+
+const TMPLS=[
+  {id:"t1",name:"Advance – Acts – Retention",am:"Kanкh – Akt – Pahelu",icon:"📐",
+   seeds:{order:{num:"PO-2024-0041",vendor:"ArmenBuild LLC",val:50000000,cur:"AMD",variable:false},
+    hasPhases:true,
+    phases:[
+      {name:"Phase 1 – Foundation & Structure",val:15000000},
+      {name:"Phase 2 – MEP & Envelope",val:20000000},
+      {name:"Phase 3 – Fit-out & Finishing",val:15000000},
+    ],
+    lines:[
+      {t:"AdvancePayment",l:"Advance Payment",c:"PercentOfContract",p:10,tr:"ContractSigned",dd:"None"},
+      {t:"ProgressAct",l:"Act 1 – Foundation",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 1 – Foundation & Structure"},
+      {t:"ProgressAct",l:"Act 2 – Structure",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 1 – Foundation & Structure"},
+      {t:"ProgressAct",l:"Act 3 – MEP Rough-in",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 2 – MEP & Envelope"},
+      {t:"ProgressAct",l:"Act 4 – Envelope",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 2 – MEP & Envelope"},
+      {t:"ProgressAct",l:"Act 5 – Fit-out",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 3 – Fit-out & Finishing"},
+      {t:"ProgressAct",l:"Act 6 – Finishing",c:"ActValue",tr:"ActApproved",r:10,dd:"Proportional",dr:10,ph:"Phase 3 – Fit-out & Finishing"},
+      {t:"RetentionRelease",l:"Warranty Retention Release",c:"RemainingBalance",tr:"FinalAcceptance"},
+      {t:"RetentionRelease",l:"DLP Release",c:"RemainingBalance",tr:"DLPExpired"},
+    ],
+    notes:"10% advance + 6 progress acts across 3 construction phases, 10% retention on each act, dual retention release."
+  }},
+  {id:"t2",name:"Phased Schedule",am:"Fazavayn Grafik",icon:"🗂",
+   seeds:{order:{num:"PO-2024-0042",vendor:"DesignLab CJSC",val:24000000,cur:"AMD",variable:false},
+    hasPhases:true,
+    phases:[
+      {name:"Phase 1 – Concept Design",val:6000000},
+      {name:"Phase 2 – Detailed Design",val:9000000},
+      {name:"Phase 3 – Construction Docs",val:9000000},
+    ],
+    lines:[
+      {t:"AdvancePayment",l:"Phase 1 Advance",c:"PercentOfPhase",p:20,tr:"ContractSigned",ph:"Phase 1 – Concept Design"},
+      {t:"InterimAdvance",l:"Phase 1 Interim",c:"PercentOfPhase",p:30,tr:"PhaseCompleted",ph:"Phase 1 – Concept Design"},
+      {t:"MilestonePayment",l:"Phase 1 Milestone",c:"PercentOfPhase",p:50,tr:"PhaseCompleted",ph:"Phase 1 – Concept Design"},
+      {t:"AdvancePayment",l:"Phase 2 Advance",c:"PercentOfPhase",p:20,tr:"PhaseCompleted",ph:"Phase 2 – Detailed Design"},
+      {t:"InterimAdvance",l:"Phase 2 Interim",c:"PercentOfPhase",p:30,tr:"PhaseCompleted",ph:"Phase 2 – Detailed Design"},
+      {t:"MilestonePayment",l:"Phase 2 Milestone",c:"PercentOfPhase",p:50,tr:"PhaseCompleted",ph:"Phase 2 – Detailed Design"},
+      {t:"AdvancePayment",l:"Phase 3 Advance",c:"PercentOfPhase",p:20,tr:"PhaseCompleted",ph:"Phase 3 – Construction Docs"},
+      {t:"InterimAdvance",l:"Phase 3 Interim",c:"PercentOfPhase",p:30,tr:"PhaseCompleted",ph:"Phase 3 – Construction Docs"},
+      {t:"MilestonePayment",l:"Phase 3 Milestone",c:"PercentOfPhase",p:50,tr:"PhaseCompleted",ph:"Phase 3 – Construction Docs"},
+    ],
+    notes:"3 independent phases, each split 20% advance / 30% interim / 50% milestone."
+  }},
+  {id:"t3",name:"Complex Multi-Currency",am:"Bazmadram Grafik",icon:"💱",
+   seeds:{order:{num:"PO-2024-0043",vendor:"TechEquip GmbH",val:280000,cur:"USD",variable:false},
+    hasPhases:true,
+    phases:[
+      {name:"Phase 1 – Mobilization & Design",val:28000},
+      {name:"Phase 2 – Delivery",val:98000},
+      {name:"Phase 3 – Installation",val:126000},
+      {name:"Phase 4 – Closeout & DLP",val:28000},
+    ],
+    lines:[
+      {t:"AdvancePayment",l:"Mobilization Advance",c:"PercentOfContract",p:5,tr:"ContractSigned",ic:"USD",sc:"AMD",fx:395,ph:"Phase 1 – Mobilization & Design"},
+      {t:"AdvancePayment",l:"Design Advance",c:"PercentOfContract",p:5,tr:"ActApproved",ic:"USD",sc:"AMD",fx:395,ph:"Phase 1 – Mobilization & Design"},
+      {t:"BatchDeliveryPayment",l:"Delivery Batch 1",c:"PercentOfContract",p:12,tr:"GoodsDelivered",ic:"USD",sc:"AMD",fx:395,ph:"Phase 2 – Delivery"},
+      {t:"BatchDeliveryPayment",l:"Delivery Batch 2",c:"PercentOfContract",p:12,tr:"GoodsDelivered",ic:"USD",sc:"AMD",fx:395,ph:"Phase 2 – Delivery"},
+      {t:"BatchDeliveryPayment",l:"Delivery Batch 3",c:"PercentOfContract",p:11,tr:"GoodsDelivered",ic:"USD",sc:"AMD",fx:395,ph:"Phase 2 – Delivery"},
+      {t:"InstallationAct",l:"Installation Act 1",c:"ActValue",tr:"InstallationCompleted",r:10,ic:"USD",sc:"AMD",fx:395,ph:"Phase 3 – Installation"},
+      {t:"InstallationAct",l:"Installation Act 2",c:"ActValue",tr:"InstallationCompleted",r:10,ic:"USD",sc:"AMD",fx:395,ph:"Phase 3 – Installation"},
+      {t:"FinalPayment",l:"Final Completion",c:"PercentOfContract",p:9,tr:"FinalAcceptance",ic:"USD",sc:"AMD",fx:395,ph:"Phase 4 – Closeout & DLP"},
+      {t:"RetentionRelease",l:"DLP Release",c:"RemainingBalance",tr:"DLPExpired",ic:"USD",sc:"AMD",fx:395,ph:"Phase 4 – Closeout & DLP"},
+      {t:"AdvanceRecovery",l:"Advance Recovery",c:"FixedAmount",tr:"FinalAcceptance",ph:"Phase 4 – Closeout & DLP"},
+    ],
+    notes:"USD invoicing, AMD settlement. FX locked at 395. 4 phases: mobilization, delivery, installation, closeout."
+  }},
+  {id:"t4",name:"Monthly Schedule",am:"Amsakan Grafik",icon:"📅",
+   seeds:{order:{num:"PO-2024-0044",vendor:"SecureGuard LLC",val:12000000,cur:"AMD",variable:false},
+    hasPhases:false,phases:[],
+    lines:[
+      {t:"AdvancePayment",l:"Initial Advance",c:"PercentOfContract",p:10,tr:"ContractSigned",dd:"None"},
+      {t:"RecurringMonthlyPayment",l:"Monthly Payment – Month 1",c:"PercentOfContract",p:20,tr:"MonthElapsed",m:1},
+      {t:"RecurringMonthlyPayment",l:"Monthly Payment – Month 2",c:"PercentOfContract",p:20,tr:"MonthElapsed",m:2},
+      {t:"RecurringMonthlyPayment",l:"Monthly Payment – Month 3",c:"PercentOfContract",p:20,tr:"MonthElapsed",m:3},
+      {t:"RecurringMonthlyPayment",l:"Monthly Payment – Month 4",c:"PercentOfContract",p:20,tr:"MonthElapsed",m:4},
+      {t:"FinalPayment",l:"Final Payment",c:"PercentOfContract",p:10,tr:"FinalAcceptance"},
+    ],
+    notes:"10% advance + 4 equal monthly payments (20%) + 10% final payment."
+  }},
+];
+
+let uid=1000;const nid=()=>++uid;
+const I={
+  EN:{t:"Payment Schedule Constructor",s1:"Order",s2:"Phases",s3:"Lines",s4:"Preview",
+    onum:"Order Number",ven:"Vendor",val:"Total Value",cur:"Currency",vr:"Variable Value",
+    sel:"Select Template",no:"Blank / No Template",hp:"Has Phases",phn:"Phase Name",phv:"Phase Value",
+    ap:"+ Add Phase",al:"+ Add Line",lbl:"Label",calc:"Calc Method",trg:"Trigger",
+    ret:"Retention %",ded:"Advance Deduction",pct:"Percentage %",fx2:"Fixed Amount",
+    fxr:"FX Rate",ic:"Invoice Currency",sc2:"Settlement Currency",ph:"Phase",
+    sch:"Scheduled",usch:"Unscheduled",rest:"Est. Retention",svt:"Save Template",
+    nxt:"Next →",bk2:"← Back",fin:"Confirm & Activate",pk:"Select payment line type",
+    bk3:"Bulk Add",mos:"months",lns:"lines",lbr:"Line Breakdown",pal:"Phase Allocation",
+    anl:"Analytics",dst:"Payment Distribution",sm:"Order Summary",sched:"Payment Schedule",
+    applied:"Template applied",seeded:"Seeded from",
+  },
+  AM:{t:"Vcharayin Grafiki Karu'ich",s1:"Patver",s2:"Fazaer",s3:"Grger",s4:"Nakatatess",
+    onum:"Patveragri Hamar",ven:"Matakarar",val:"Yendar Arvek",cur:"Arvuyt",vr:"Pokhokhakan",
+    sel:"Yntrel Kakapar",no:"Depk Ches",hp:"Uner Fazaer",phn:"Fazayi Anvanoom",phv:"Fazayi Arvek",
+    ap:"+ Faza",al:"+ Gits",lbl:"Nshum",calc:"Hashvark",trg:"Yelaketi",
+    ret:"Pahelu %",ded:"Kanкh Marman",pct:"Tokos %",fx2:"Fiks Gumar",
+    fxr:"Pokhararzhek",ic:"Hashi Arvuyt",sc2:"Vchayman Arvuyt",ph:"Faza",
+    sch:"Tzragr'vats",usch:"Chunks'",rest:"Kut. Pahelu",svt:"Pahel Kakapar",
+    nxt:"Hadjord →",bk2:"← Nakord",fin:"Hashtvarts'nel",pk:"Yntrel vchayin gitsi tesakin",
+    bk3:"Khmb. Avelats'",mos:"amis",lns:"gits",lbr:"Gtseri Bashes",pal:"Fazayi Bazash",
+    anl:"Varlukagrutyun",dst:"Vchayin Basegh",sm:"Patveragri Amfofjum",sched:"Vchayin Grafik",
+    applied:"Kakapary kirarutyun",seeded:"Kakapary",
+  }
+};
+
+// App state
+let lang="EN",step=0;
+let order={num:"",vendor:"",val:50000000,cur:"AMD",variable:false,tmpl:null};
+let hasPhases=false,phases=[],lines=[];
+let savedTemplates=[],appliedTmpl=null;
+let showPalette=false,showSave=false,saveName="";
+let dragFrom=null;
+let bulkType=LT[0].code,bulkCount=3;
+
+function mkLine(code){
+  const lt=getLT(code);
+  const hasPct=["PercentOfContract","PercentOfPhase","PercentOfAct"].includes(lt.dc);
+  return{id:nid(),type:code,label:lt.en,calc:lt.dc,
+    pct:hasPct?10:null,fixed:null,trigger:lt.dt,
+    ret:lt.fields.includes("retention")?10:null,
+    ded:"None",dedR:null,ic:"AMD",sc:null,fx:null,
+    months:lt.fields.includes("months")?1:null,phase:null,exp:true};
+}
+
+function applyTemplate(tmpl){
+  const s=tmpl.seeds;
+  order={num:s.order.num,vendor:s.order.vendor,val:s.order.val,cur:s.order.cur,variable:s.order.variable,tmpl:tmpl.id};
+  hasPhases=s.hasPhases;
+  phases=s.phases.map(p=>({id:nid(),name:p.name,val:p.val}));
+  lines=s.lines.map(l=>({
+    id:nid(),type:l.t,label:l.l,calc:l.c||"PercentOfContract",
+    pct:l.p||null,fixed:l.fix||null,trigger:l.tr||"ContractSigned",
+    ret:l.r||null,ded:l.dd||"None",dedR:l.dr||null,
+    ic:l.ic||"AMD",sc:l.sc||null,fx:l.fx||null,
+    months:l.m||null,phase:l.ph||null,exp:false
+  }));
+  appliedTmpl=tmpl;
+}
+
+function totalPct(){return lines.reduce((s,l)=>s+(l.pct||0),0)}
+function retEst(){return lines.filter(l=>l.ret).reduce((s,l)=>s+order.val*(l.pct||0)/100*(l.ret/100),0)}
+function phTotal(){return phases.reduce((s,p)=>s+(parseFloat(p.val)||0),0)}
+function linesOf(code){return lines.filter(l=>l.type===code).length}
+
+// ── DOM helpers ──
+function h(tag,attrs,children){
+  const el=document.createElement(tag);
+  if(attrs)Object.entries(attrs).forEach(([k,v])=>{
+    if(k==="className")el.className=v;
+    else if(k==="style")el.style.cssText=v;
+    else if(k.startsWith("on"))el.addEventListener(k.slice(2).toLowerCase(),v);
+    else el.setAttribute(k,v);
+  });
+  if(children!=null)(Array.isArray(children)?children:[children]).forEach(c=>{
+    if(c==null)return;
+    el.appendChild(typeof c==="string"||typeof c==="number"?document.createTextNode(String(c)):c instanceof Node?c:document.createTextNode(String(c)));
+  });
+  return el;
+}
+const tx=t=>document.createTextNode(String(t));
+function fld(lbl,inpEl){const d=h("div",{className:"f"});if(lbl)d.appendChild(h("label",{},lbl));d.appendChild(inpEl);return d}
+function inp(val,cb,type,attrs){
+  const attrs2={type:type||"text",...(attrs||{})};
+  const i=h("input",attrs2);
+  i.value=val!==null&&val!==undefined?val:"";
+  i.addEventListener("input",e=>cb(e.target.value));
+  return i;
+}
+function selEl(val,opts,cb){
+  const s=h("select",{});
+  opts.forEach(o=>{
+    const v=typeof o==="string"?o:o.v;
+    const l=typeof o==="string"?o:o.l;
+    const opt=h("option",{value:v},l);
+    if(v===val||(!val&&o==="")||v===(val||""))opt.selected=true;
+    s.appendChild(opt);
+  });
+  s.addEventListener("change",e=>cb(e.target.value));
+  return s;
+}
+function btn(lbl,cls,cb,dis){
+  const b=h("button",{className:"btn "+(cls||""),onClick:cb});
+  b.innerHTML=lbl;
+  if(dis)b.disabled=true;
+  return b;
+}
+function div(cls,children){return h("div",{className:cls},children)}
+
+// ── HEADER ──
+function rHdr(){
+  const t=I[lang];
+  const hdr=h("div",{className:"hdr"});
+  hdr.appendChild(h("div",{className:"logo"},[h("div",{className:"logo-m"},"B"),tx("Berg Construction")]));
+  hdr.appendChild(h("div",{className:"hdr-div"}));
+  const steps=h("div",{className:"steps"});
+  [t.s1,t.s2,t.s3,t.s4].forEach((s,i)=>{
+    const b=h("div",{className:"sb"+(step===i?" active":step>i?" done":""),onClick:()=>{step=i;render()}});
+    b.appendChild(h("div",{className:"sn"},step>i?"✓":String(i+1)));
+    b.appendChild(tx(" "+s));
+    steps.appendChild(b);
+  });
+  hdr.appendChild(steps);
+  const hr=h("div",{className:"hdr-right"});
+  const lsw=h("div",{className:"lsw"});
+  ["EN","AM"].forEach(l=>lsw.appendChild(h("button",{className:"lb"+(lang===l?" on":""),onClick:()=>{lang=l;render()}},l)));
+  hr.appendChild(lsw);
+  hdr.appendChild(hr);
+  return hdr;
+}
+
+// ── SIDEBAR ──
+function rSidebar(){
+  const t=I[lang],sb=h("div",{className:"sidebar"});
+  sb.appendChild(h("div",{className:"sbt"},t.anl));
+  const pct=totalPct(),cls=pct>100?"e":pct===100?"ok":"w";
+  [[t.onum+" Value",fmtC(order.val,order.cur),""],
+   [t.sch,pct.toFixed(1)+"%",cls],
+   [t.usch,(100-pct).toFixed(1)+"%",pct>100?"e":"w"],
+   [t.rest,fmtC(Math.round(retEst()),order.cur),""],
+   ["Lines",String(lines.length),""]
+  ].forEach(([l,v,c])=>{
+    const r=h("div",{className:"sbr"});
+    r.appendChild(h("div",{className:"sbl"},l));
+    r.appendChild(h("div",{className:"sbv"+(c?" "+c:"")},v));
+    sb.appendChild(r);
+  });
+  if(pct>0){
+    const bo=h("div",{className:"bar-o"});
+    const barColor=pct>100?"#e04040":pct===100?"#5db843":"#e8950a";
+    bo.appendChild(h("div",{className:"bar-i",style:`width:${Math.min(pct,100)}%;background:${barColor}`}));
+    sb.appendChild(bo);
+  }
+  const used=LT.filter(lt=>linesOf(lt.code)>0);
+  if(used.length){
+    sb.appendChild(h("div",{className:"sb-div"}));
+    sb.appendChild(h("div",{className:"sbt"},t.lbr));
+    used.forEach(lt=>{
+      const r=h("div",{className:"sbr"});
+      const lbl=h("div",{className:"sbl",style:"display:flex;align-items:center;gap:5px"});
+      lbl.appendChild(h("span",{style:"font-size:13px"},lt.icon));
+      lbl.appendChild(tx(lt.en));
+      r.appendChild(lbl);
+      r.appendChild(h("div",{className:"sbv",style:"font-family:var(--mono);font-size:11px"},"×"+linesOf(lt.code)));
+      sb.appendChild(r);
+    });
+  }
+  if(hasPhases&&phases.length){
+    sb.appendChild(h("div",{className:"sb-div"}));
+    sb.appendChild(h("div",{className:"sbt"},t.pal));
+    phases.forEach(ph=>{
+      const w=order.val>0?(ph.val/order.val)*100:0;
+      const r=h("div",{className:"sbr"});
+      r.appendChild(h("div",{className:"sbl",style:"font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1"},ph.name));
+      r.appendChild(h("div",{className:"sbv",style:"font-size:11px;font-family:var(--mono)"},w.toFixed(0)+"%"));
+      sb.appendChild(r);
+      const bo=h("div",{className:"bar-o",style:"margin-bottom:5px"});
+      bo.appendChild(h("div",{className:"bar-i",style:`width:${Math.min(w,100)}%;background:#4080e0`}));
+      sb.appendChild(bo);
+    });
+  }
+  sb.appendChild(h("div",{className:"sb-spacer"}));
+  if(lines.length) sb.appendChild(btn("⭐ "+t.svt,"",()=>{showSave=true;render()}));
+  return sb;
+}
+
+// ── STEP 1 ──
+function rStep1(){
+  const t=I[lang],all=[...TMPLS,...savedTemplates];
+  const wrap=h("div",{style:"display:flex;flex-direction:column;gap:14px"});
+
+  const c1=h("div",{className:"card"});
+  c1.appendChild(h("div",{className:"ct"},"📋 "+t.s1));
+  const fg=h("div",{className:"fg"});
+  fg.appendChild(fld(t.onum,inp(order.num,v=>{order.num=v})));
+  fg.appendChild(fld(t.ven,inp(order.vendor,v=>{order.vendor=v})));
+  fg.appendChild(fld(t.val,inp(order.val,v=>{order.val=parseFloat(v)||0;render()},"number",{min:0,step:1000})));
+  fg.appendChild(fld(t.cur,selEl(order.cur,CURS,v=>{order.cur=v;render()})));
+  const cbw=h("div",{className:"f cbr"});
+  const cb=h("input",{type:"checkbox",id:"vv"});cb.checked=order.variable;
+  cb.addEventListener("change",e=>{order.variable=e.target.checked;render()});
+  cbw.appendChild(cb);cbw.appendChild(h("label",{for:"vv"},t.vr));
+  if(order.variable)cbw.appendChild(h("span",{className:"tag ta",style:"margin-left:6px"},"VARIABLE"));
+  fg.appendChild(cbw);
+  c1.appendChild(fg);
+  wrap.appendChild(c1);
+
+  const c2=h("div",{className:"card"});
+  c2.appendChild(h("div",{className:"ct"},"🗂 "+t.sel));
+  c2.appendChild(h("div",{style:"font-size:12px;color:var(--text3);margin-bottom:6px"},"Selecting a template seeds all steps: order details, phases, and payment lines."));
+  const tg=h("div",{className:"tg"});
+  const bc=h("div",{className:"tc"+(order.tmpl===null?" sel":""),onClick:()=>{order.tmpl=null;appliedTmpl=null;lines=[];hasPhases=false;phases=[];render()}});
+  bc.appendChild(h("div",{className:"ti"},"✦"));
+  bc.appendChild(h("div",{className:"tn"},t.no));
+  bc.appendChild(h("div",{className:"ts"},"0 lines"));
+  tg.appendChild(bc);
+  all.forEach(tmpl=>{
+    const s=tmpl.seeds;
+    const tc=h("div",{className:"tc"+(order.tmpl===tmpl.id?" sel":""),onClick:()=>{applyTemplate(tmpl);render()}});
+    tc.appendChild(h("div",{className:"ti"},tmpl.icon));
+    tc.appendChild(h("div",{className:"tn"},tmpl.name));
+    tc.appendChild(h("div",{className:"ts"},s.lines.length+" lines"+(s.hasPhases?" · "+s.phases.length+"ph":"")));
+    const dots=h("div",{className:"tc-steps"});
+    if(s.order.vendor){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--amber-mid)"}));d.appendChild(tx(s.order.vendor));dots.appendChild(d);}
+    if(s.hasPhases){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--blue-lt)"}));d.appendChild(tx(s.phases.length+" phases"));dots.appendChild(d);}
+    if(s.order.cur!=="AMD"){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--teal)"}));d.appendChild(tx(s.order.cur));dots.appendChild(d);}
+    tc.appendChild(dots);
+    tg.appendChild(tc);
+  });
+  c2.appendChild(tg);
+  if(appliedTmpl){
+    const ab=h("div",{style:"margin-top:10px"});
+    ab.appendChild(h("div",{className:"applied-badge"},[h("span",{},"✓ "),tx(t.applied+": "+appliedTmpl.name)]));
+    if(appliedTmpl.seeds.notes) ab.appendChild(h("div",{style:"font-size:11px;color:var(--text3);padding:4px 2px 0"},appliedTmpl.seeds.notes));
+    const qn=h("div",{className:"quick-nav"});
+    if(appliedTmpl.seeds.hasPhases) qn.appendChild(btn("→ Review Phases","bsm",()=>{step=1;render()}));
+    qn.appendChild(btn("→ Review Lines","bsm bp",()=>{step=2;render()}));
+    ab.appendChild(qn);
+    c2.appendChild(ab);
+  }
+  wrap.appendChild(c2);
+  return wrap;
+}
+
+// ── STEP 2 ──
+function rStep2(){
+  const t=I[lang],wrap=h("div",{className:"card"});
+  wrap.appendChild(h("div",{className:"ct"},"🗂 "+t.s2));
+  if(appliedTmpl&&appliedTmpl.seeds.hasPhases)
+    wrap.appendChild(h("div",{className:"applied-badge",style:"margin-bottom:12px"},[h("span",{},"✓ "),tx(t.seeded+": "+appliedTmpl.name)]));
+  const cbw=h("div",{className:"f cbr",style:"margin-bottom:12px"});
+  const cb=h("input",{type:"checkbox",id:"hp"});cb.checked=hasPhases;
+  cb.addEventListener("change",e=>{hasPhases=e.target.checked;render()});
+  cbw.appendChild(cb);cbw.appendChild(h("label",{for:"hp"},t.hp));
+  wrap.appendChild(cbw);
+  if(hasPhases){
+    const pl=h("div",{className:"ph-list"});
+    phases.forEach(ph=>{
+      const pi=h("div",{className:"ph-item"});
+      const ni=inp(ph.name,v=>{ph.name=v});
+      const vi=inp(ph.val,v=>{ph.val=parseFloat(v)||0;render()},"number",{min:0,step:100000});
+      pi.appendChild(fld(t.phn,ni));
+      pi.appendChild(fld(t.phv+" ("+order.cur+")",vi));
+      pi.appendChild(h("div",{style:"padding-bottom:2px"},[btn("✕","bsm bd",()=>{phases=phases.filter(p=>p.id!==ph.id);render()})]));
+      pl.appendChild(pi);
+    });
+    const pt=phTotal(),diff=pt-order.val,vcls=Math.abs(diff)<1?"ok":diff>0?"e":"w";
+    const msg=`Total: ${fmtC(pt,order.cur)} / ${fmtC(order.val,order.cur)}`+(Math.abs(diff)<1?" ✓ Balanced":diff>0?` ↑ Over by ${fmtC(diff,order.cur)}`:`  Under by ${fmtC(-diff,order.cur)}`);
+    pl.appendChild(h("div",{className:"ph-valid "+vcls},msg));
+    wrap.appendChild(pl);
+    const addBtn=btn(t.ap,"",()=>{phases.push({id:nid(),name:"Phase "+(phases.length+1),val:0});render()});
+    addBtn.style.marginTop="10px";
+    wrap.appendChild(addBtn);
+  }
+  return wrap;
+}
+
+// ── LINE CARD ──
+function rLineCard(line,idx){
+  const lt=getLT(line.type),t=I[lang];
+  const hasPct=["PercentOfContract","PercentOfPhase","PercentOfAct"].includes(line.calc);
+  const pl=h("div",{className:"pl",draggable:"true"});
+  pl.addEventListener("dragstart",e=>{dragFrom=idx;e.dataTransfer.effectAllowed="move";});
+  pl.addEventListener("dragover",e=>{e.preventDefault();pl.classList.add("dov");});
+  pl.addEventListener("dragleave",()=>pl.classList.remove("dov"));
+  pl.addEventListener("drop",e=>{
+    e.preventDefault();pl.classList.remove("dov");
+    if(dragFrom!==null&&dragFrom!==idx){const a=[...lines];const[m]=a.splice(dragFrom,1);a.splice(idx,0,m);lines=a;}
+    dragFrom=null;render();
+  });
+  pl.addEventListener("dragend",()=>{dragFrom=null;document.querySelectorAll(".pl").forEach(el=>el.classList.remove("dov"));});
+
+  const sumParts=[];
+  if(line.pct!=null)sumParts.push(line.pct+"%");
+  if(line.fixed!=null)sumParts.push(fmtC(line.fixed,line.ic));
+  if(line.trigger)sumParts.push(line.trigger.replace(/([A-Z])/g," $1").trim());
+
+  const plh=h("div",{className:"plh",onClick:()=>{line.exp=!line.exp;render();}});
+  const dh=h("span",{className:"dh"},"⠿");dh.addEventListener("mousedown",e=>e.stopPropagation());
+  const badge=h("span",{className:"pbadge",style:`color:${lt.color};background:${lt.bg};border-color:${lt.color}`});
+  badge.appendChild(h("span",{style:"font-size:13px;line-height:1"},lt.icon));
+  badge.appendChild(tx(" "+lt.en));
+  const acts=h("div",{className:"pa"});acts.addEventListener("click",e=>e.stopPropagation());
+  acts.appendChild(btn("⧉","bsm",()=>{const dup={...line,id:nid(),label:line.label+" (copy)",exp:false};const i=lines.indexOf(line);lines.splice(i+1,0,dup);render();}));
+  acts.appendChild(btn("✕","bsm bd",()=>{lines=lines.filter(l=>l!==line);render();}));
+  [dh,h("span",{className:"pn"},String(idx+1).padStart(2,"0")),badge,
+   h("span",{className:"pl-l"},line.label),
+   h("span",{className:"pl-s"},sumParts.join(" · ")),
+   acts,
+   h("span",{className:"pc"+(line.exp?" op":"")},"▾")
+  ].forEach(el=>plh.appendChild(el));
+  pl.appendChild(plh);
+
+  if(line.exp){
+    const body=h("div",{className:"plb"});
+    const fg=h("div",{className:"fg fg3"});
+    fg.appendChild(fld(t.lbl,inp(line.label,v=>{line.label=v})));
+    fg.appendChild(fld(t.calc,selEl(line.calc,CALCS,v=>{line.calc=v;render();})));
+    fg.appendChild(fld(t.trg,selEl(line.trigger,TRIGS,v=>{line.trigger=v;})));
+    if(hasPct) fg.appendChild(fld(t.pct,inp(line.pct,v=>{line.pct=parseFloat(v)||null;render();},"number",{min:0,max:100,step:0.5})));
+    if(line.calc==="FixedAmount"||lt.fields.includes("fixed")) fg.appendChild(fld(t.fx2,inp(line.fixed,v=>{line.fixed=parseFloat(v)||null;},"number",{min:0})));
+    if(lt.fields.includes("retention")) fg.appendChild(fld(t.ret,inp(line.ret,v=>{line.ret=parseFloat(v)||null;},"number",{min:0,max:100,step:0.5})));
+    if(lt.fields.includes("deductRate")) fg.appendChild(fld(t.ded,selEl(line.ded||"None",DEDS,v=>{line.ded=v;})));
+    if(lt.fields.includes("months")) fg.appendChild(fld(t.mos,inp(line.months,v=>{line.months=parseInt(v)||null;},"number",{min:1,max:60})));
+    if(hasPhases&&phases.length>0){
+      const opts=[{v:"",l:"—"},...phases.map(p=>({v:p.name,l:p.name}))];
+      fg.appendChild(fld(t.ph,selEl(line.phase||"",opts,v=>{line.phase=v||null;})));
+    }
+    body.appendChild(fg);
+    if(lt.fields.includes("fx")||line.ic==="USD"||line.ic==="EUR"){
+      body.appendChild(h("div",{className:"inner-div"}));
+      const fg2=h("div",{className:"fg fg3"});
+      fg2.appendChild(fld(t.ic,selEl(line.ic||"AMD",CURS,v=>{line.ic=v;})));
+      fg2.appendChild(fld(t.sc2,selEl(line.sc||"",["","AMD","USD","EUR"],v=>{line.sc=v||null;})));
+      fg2.appendChild(fld(t.fxr,inp(line.fx,v=>{line.fx=parseFloat(v)||null;},"number",{min:0,step:0.01,placeholder:"e.g. 395"})));
+      body.appendChild(fg2);
+    }
+    pl.appendChild(body);
+  }
+  return pl;
+}
+
+// ── STEP 3 ──
+function rStep3(){
+  const t=I[lang],wrap=h("div",{style:"display:flex;flex-direction:column;gap:10px"});
+  if(appliedTmpl)
+    wrap.appendChild(h("div",{className:"applied-badge"},[h("span",{},"✓ "),tx(t.applied+": "+appliedTmpl.name+" — "+lines.length+" "+t.lns)]));
+  const bulk=h("div",{className:"bulk-r"});
+  bulk.appendChild(h("span",{className:"bk-lbl"},t.bk3));
+  const bs=h("select",{style:"background:#f0f2f5;border:1px solid rgba(0,0,0,0.10);border-radius:6px;padding:5px 8px;color:#1a1d23;font-family:inherit;font-size:12px;outline:none;"});
+  LT.forEach(lt=>{const o=h("option",{value:lt.code},lt.icon+" "+lt.en);bs.appendChild(o);});
+  bs.addEventListener("change",e=>{bulkType=e.target.value;});
+  const bi=h("input",{type:"number",min:1,max:20,style:"width:48px;background:#f0f2f5;border:1px solid rgba(0,0,0,0.10);border-radius:6px;padding:5px 8px;color:#1a1d23;font-family:inherit;font-size:12px;outline:none;"});
+  bi.value=bulkCount;
+  bi.addEventListener("input",e=>{bulkCount=Math.max(1,parseInt(e.target.value)||1);});
+  bulk.appendChild(bs);bulk.appendChild(bi);
+  bulk.appendChild(h("span",{style:"font-size:12px;color:var(--text3)"},t.lns));
+  bulk.appendChild(btn("Add","bsm",()=>{
+    for(let i=0;i<bulkCount;i++){const l=mkLine(bulkType);l.label=getLT(bulkType).en+" "+(linesOf(bulkType)+1);l.exp=false;lines.push(l);}
+    render();
+  }));
+  bulk.appendChild(h("div",{style:"flex:1"}));
+  bulk.appendChild(btn(t.al,"bp",()=>{showPalette=true;render();}));
+  wrap.appendChild(bulk);
+
+  if(!lines.length){
+    wrap.appendChild(h("div",{className:"empty"},"No payment lines yet. Pick a template in Step 1 or use \"+ Add Line\"."));
+  } else {
+    const ll=h("div",{className:"ll"});
+    lines.forEach((l,i)=>ll.appendChild(rLineCard(l,i)));
+    wrap.appendChild(ll);
+    if(lines.some(l=>l.pct)){
+      const wc=h("div",{className:"card"});
+      wc.appendChild(h("div",{className:"ct"},"📊 "+t.dst));
+      const tot=totalPct();
+      lines.forEach(l=>{
+        const lt=getLT(l.type),pct=l.pct||0,bw=tot>0?(pct/Math.max(tot,100))*100:0;
+        const wr=h("div",{className:"wr"});
+        wr.appendChild(h("div",{className:"wl"},l.label));
+        const wa=h("div",{className:"wa"});
+        wa.appendChild(h("div",{className:"wb",style:`width:${bw}%;background:${lt.color}`}));
+        wr.appendChild(wa);wr.appendChild(h("div",{className:"wp"},pct?pct+"%":"—"));
+        wc.appendChild(wr);
+      });
+      wrap.appendChild(wc);
+    }
+  }
+  return wrap;
+}
+
+// ── STEP 4 ──
+function rStep4(){
+  const t=I[lang],wrap=h("div",{style:"display:flex;flex-direction:column;gap:14px"});
+  const c1=h("div",{className:"card"});
+  c1.appendChild(h("div",{className:"ct"},"📋 "+t.sm));
+  const fg=h("div",{className:"fg"});
+  [["Order",order.num],["Vendor",order.vendor],["Value",fmtC(order.val,order.cur)],["Lines",String(lines.length)]].forEach(([l,v])=>{
+    const d=h("div",{style:"display:flex;flex-direction:column;gap:3px"});
+    d.appendChild(h("span",{style:"font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)"},l));
+    d.appendChild(h("span",{style:"font-size:14px;font-weight:600"},v||"—"));
+    fg.appendChild(d);
+  });
+  c1.appendChild(fg);
+  wrap.appendChild(c1);
+
+  if(hasPhases&&phases.length){
+    const cp=h("div",{className:"card"});
+    cp.appendChild(h("div",{className:"ct"},"🗂 Phases ("+phases.length+")"));
+    const fg2=h("div",{className:"fg fg3"});
+    phases.forEach(ph=>{
+      const d=h("div",{style:"background:var(--surf2);border-radius:var(--r);padding:9px;display:flex;flex-direction:column;gap:3px;border:1px solid var(--border)"});
+      d.appendChild(h("div",{style:"font-size:11px;font-weight:600;color:var(--text)"},ph.name));
+      d.appendChild(h("div",{style:"font-size:12px;font-family:var(--mono);color:var(--amber)"},fmtC(ph.val,order.cur)));
+      fg2.appendChild(d);
+    });
+    cp.appendChild(fg2);
+    wrap.appendChild(cp);
+  }
+
+  const c2=h("div",{className:"card"});
+  c2.appendChild(h("div",{className:"ct"},"💳 "+t.sched+" ("+lines.length+")"));
+  if(!lines.length){
+    c2.appendChild(h("div",{style:"color:var(--text3);font-size:12px;padding:12px 0"},"No payment lines configured."));
+  } else {
+    const tw=h("div",{style:"overflow-x:auto"});
+    const tbl=h("table",{className:"ptbl"});
+    const thead=h("thead",{});
+    const tr=h("tr",{});
+    ["#","Type","Label","Calc","Trigger","%","Ret.","Cur."].forEach(col=>tr.appendChild(h("th",{},col)));
+    thead.appendChild(tr);tbl.appendChild(thead);
+    const tbody=h("tbody",{});
+    lines.forEach((l,i)=>{
+      const lt=getLT(l.type),row=h("tr",{});
+      row.appendChild(h("td",{style:"font-family:var(--mono);font-size:10px;color:var(--text3)"},String(i+1)));
+      const td=h("td",{});
+      td.appendChild(h("span",{className:"chip",style:`background:${lt.bg};color:${lt.color}`},[h("span",{style:"font-size:11px"},lt.icon),tx(" "+lt.en)]));
+      row.appendChild(td);
+      row.appendChild(h("td",{style:"font-weight:500"},l.label));
+      row.appendChild(h("td",{style:"font-size:11px;color:var(--text3)"},l.calc));
+      row.appendChild(h("td",{style:"font-size:11px;color:var(--text3)"},l.trigger));
+      row.appendChild(h("td",{style:"font-family:var(--mono);font-size:12px"},l.pct!=null?l.pct+"%":l.fixed!=null?fmtC(l.fixed,l.ic):"—"));
+      row.appendChild(h("td",{style:"font-family:var(--mono);font-size:12px;color:"+(l.ret?"var(--amber)":"var(--text3)")},l.ret?l.ret+"%":"—"));
+      row.appendChild(h("td",{},[h("span",{className:"tag tb"},l.ic+(l.sc?"→"+l.sc:""))]));
+      tbody.appendChild(row);
+    });
+    tbl.appendChild(tbody);tw.appendChild(tbl);c2.appendChild(tw);
+  }
+  wrap.appendChild(c2);
+
+  if(lines.some(l=>l.pct)){
+    const wc=h("div",{className:"card"});
+    wc.appendChild(h("div",{className:"ct"},"📊 Cash Flow Distribution"));
+    const tot=totalPct();
+    lines.forEach(l=>{
+      const lt=getLT(l.type),pct=l.pct||0,bw=tot>0?(pct/Math.max(tot,100))*100:0;
+      const wr=h("div",{className:"wr"});
+      wr.appendChild(h("div",{className:"wl"},l.label));
+      const wa=h("div",{className:"wa"});
+      wa.appendChild(h("div",{className:"wb",style:`width:${bw}%;background:${lt.color}`}));
+      wr.appendChild(wa);wr.appendChild(h("div",{className:"wp"},pct?pct+"%":"—"));
+      wc.appendChild(wr);
+    });
+    wrap.appendChild(wc);
+  }
+
+  const fn=h("div",{className:"fn"});
+  fn.appendChild(btn("⭐ "+t.svt,"",()=>{showSave=true;render();}));
+  fn.appendChild(btn("✓ "+t.fin,"bp",()=>{
+    const msg=`Schedule confirmed!\n\nOrder: ${order.num}\nVendor: ${order.vendor}\nValue: ${fmtC(order.val,order.cur)}\nLines: ${lines.length}${hasPhases?"\nPhases: "+phases.length:""}`;
+    alert(msg);
+  }));
+  wrap.appendChild(fn);
+  return wrap;
+}
+
+// ── PALETTE MODAL ──
+function rPalette(){
+  const t=I[lang];
+  const ov=h("div",{className:"ov",onClick:()=>{showPalette=false;render();}});
+  const modal=h("div",{className:"modal",onClick:e=>e.stopPropagation()});
+  const mh=h("div",{className:"mh"});
+  mh.appendChild(h("div",{className:"mt"},t.pk));
+  mh.appendChild(btn("✕ Close","bsm",()=>{showPalette=false;render();}));
+  modal.appendChild(mh);
+  const pg=h("div",{className:"pg"});
+  LT.forEach(lt=>{
+    const pi=h("div",{className:"pi",onClick:()=>{lines.push(mkLine(lt.code));showPalette=false;render();}});
+    const ico=h("div",{className:"pii",style:`background:${lt.bg}`},[h("span",{style:"font-size:16px"},lt.icon)]);
+    const td=h("div",{});
+    td.appendChild(h("div",{className:"pin"},lt.en));
+    td.appendChild(h("div",{className:"piam"},lt.am));
+    td.appendChild(h("div",{className:"pid"},"Fields: "+lt.fields.join(", ")));
+    pi.appendChild(ico);pi.appendChild(td);pg.appendChild(pi);
+  });
+  modal.appendChild(pg);ov.appendChild(modal);return ov;
+}
+
+// ── SAVE TEMPLATE MODAL ──
+function rSaveModal(){
+  const t=I[lang];
+  const ov=h("div",{className:"ov",onClick:()=>{showSave=false;render();}});
+  const box=h("div",{className:"save-box",onClick:e=>e.stopPropagation()});
+  box.appendChild(h("div",{style:"font-size:15px;font-weight:600"},"⭐ "+t.svt));
+  const ni=inp(saveName,v=>{saveName=v;},"text",{placeholder:"e.g. Standard Subcontractor"});
+  box.appendChild(fld("Template Name",ni));
+  box.appendChild(h("div",{style:"font-size:12px;color:var(--text3)"},"Saves "+lines.length+" lines"+(hasPhases?", "+phases.length+" phases":"")+". Appears in template picker for future orders."));
+  const btns=h("div",{style:"display:flex;gap:8px;justify-content:flex-end"});
+  btns.appendChild(btn("Cancel","",()=>{showSave=false;render();}));
+  btns.appendChild(btn("Save","bp",()=>{
+    if(!saveName.trim())return;
+    savedTemplates.push({
+      id:"c"+Date.now(),name:saveName,am:saveName,icon:"⭐",
+      seeds:{
+        order:{num:order.num,vendor:order.vendor,val:order.val,cur:order.cur,variable:order.variable},
+        hasPhases,
+        phases:phases.map(({name,val})=>({name,val})),
+        lines:lines.map(l=>({t:l.type,l:l.label,c:l.calc,p:l.pct,tr:l.trigger,r:l.ret,dd:l.ded,dr:l.dedR,ic:l.ic,sc:l.sc,fx:l.fx,m:l.months,ph:l.phase})),
+        notes:"Custom template — saved "+new Date().toLocaleDateString()
+      }
+    });
+    saveName="";showSave=false;render();
+  }));
+  box.appendChild(btns);ov.appendChild(box);return ov;
+}
+
+// ── MAIN RENDER ──
+function render(){
+  const t=I[lang],app=document.getElementById("app");
+  app.innerHTML="";
+  app.appendChild(rHdr());
+  const body=h("div",{className:"body"});
+  const content=h("div",{className:"content"});
+  content.appendChild(step===0?rStep1():step===1?rStep2():step===2?rStep3():rStep4());
+  if(step<3){
+    const fn=h("div",{className:"fn"});
+    fn.appendChild(btn(t.bk2,"",()=>{step=Math.max(0,step-1);render();},step===0));
+    fn.appendChild(btn(t.nxt,"bp",()=>{step=Math.min(3,step+1);render();}));
+    content.appendChild(fn);
+  }
+  body.appendChild(content);
+  body.appendChild(rSidebar());
+  app.appendChild(body);
+  if(showPalette)app.appendChild(rPalette());
+  if(showSave)app.appendChild(rSaveModal());
+}
+
+render();
+</script>
+</body>
+</html>
