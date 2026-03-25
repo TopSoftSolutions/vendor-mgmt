@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hy">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -363,16 +363,16 @@
 
 <script>
 const LT=[
-  {code:"AdvancePayment",en:"Advance Payment",am:"Կankhavans Vchar",icon:"↑",color:"#b06b10",bg:"#fef3e2",fields:["pct","trigger","deduction"],dt:"ContractSigned",dc:"PercentOfContract"},
-  {code:"ProgressAct",en:"Progress Act",am:"Erkachneri Akt",icon:"📋",color:"#1450a0",bg:"#e8f0fc",fields:["trigger","retention","deductRate"],dt:"ActApproved",dc:"ActValue"},
-  {code:"MilestonePayment",en:"Milestone Payment",am:"Fazayin Vchar",icon:"🏁",color:"#4a3bb0",bg:"#eeedf8",fields:["pct","trigger","phase"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
-  {code:"InterimAdvance",en:"Interim Advance",am:"Mknday Kanкh",icon:"⏩",color:"#8c2850",bg:"#f8e8ef",fields:["pct","phase","trigger"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
-  {code:"BatchDeliveryPayment",en:"Batch Delivery",am:"Khtambay Vchar",icon:"📦",color:"#0d6e58",bg:"#e0f5ef",fields:["pct","trigger","fx"],dt:"GoodsDelivered",dc:"PercentOfContract"},
-  {code:"InstallationAct",en:"Installation Act",am:"Montaji Akt",icon:"🔧",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"InstallationCompleted",dc:"ActValue"},
-  {code:"RecurringMonthlyPayment",en:"Monthly Payment",am:"Amsakan Vchar",icon:"🔄",color:"#854F0B",bg:"#fef3e2",fields:["pct","months"],dt:"MonthElapsed",dc:"PercentOfContract"},
-  {code:"RetentionRelease",en:"Retention Release",am:"Pahelu Batsahanutyun",icon:"🔓",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"FinalAcceptance",dc:"RemainingBalance"},
-  {code:"FinalPayment",en:"Final Payment",am:"Verjin Vchar",icon:"✅",color:"#1450a0",bg:"#e8f0fc",fields:["pct","trigger"],dt:"FinalAcceptance",dc:"RemainingBalance"},
-  {code:"AdvanceRecovery",en:"Advance Recovery",am:"Канкх Vatsvets",icon:"↩",color:"#9b2121",bg:"#fceaea",fields:["fixed","trigger"],dt:"ActApproved",dc:"FixedAmount"},
+  {code:"AdvancePayment",en:"Advance Payment",am:"Կանխավճար",icon:"↑",color:"#b06b10",bg:"#fef3e2",fields:["pct","trigger","deduction"],dt:"ContractSigned",dc:"PercentOfContract"},
+  {code:"ProgressAct",en:"Progress Act",am:"Կատարված աշխատանքների ակտ",icon:"📋",color:"#1450a0",bg:"#e8f0fc",fields:["trigger","retention","deductRate"],dt:"ActApproved",dc:"ActValue"},
+  {code:"MilestonePayment",en:"Milestone Payment",am:"Փուլային վճարում",icon:"🏁",color:"#4a3bb0",bg:"#eeedf8",fields:["pct","trigger","phase"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
+  {code:"InterimAdvance",en:"Interim Advance",am:"Միջանկյալ կանխավճար",icon:"⏩",color:"#8c2850",bg:"#f8e8ef",fields:["pct","phase","trigger"],dt:"PhaseCompleted",dc:"PercentOfPhase"},
+  {code:"BatchDeliveryPayment",en:"Batch Delivery",am:"Խմբաքանակային մատակարարման վճարում",icon:"📦",color:"#0d6e58",bg:"#e0f5ef",fields:["pct","trigger","fx"],dt:"GoodsDelivered",dc:"PercentOfContract"},
+  {code:"InstallationAct",en:"Installation Act",am:"Մոնտաժի ակտ",icon:"🔧",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"InstallationCompleted",dc:"ActValue"},
+  {code:"RecurringMonthlyPayment",en:"Monthly Payment",am:"Ամսական վճարում",icon:"🔄",color:"#854F0B",bg:"#fef3e2",fields:["pct","months"],dt:"MonthElapsed",dc:"PercentOfContract"},
+  {code:"RetentionRelease",en:"Retention Release",am:"Պահման ազատում",icon:"🔓",color:"#2d6a1f",bg:"#eaf6e4",fields:["trigger","retention"],dt:"FinalAcceptance",dc:"RemainingBalance"},
+  {code:"FinalPayment",en:"Final Payment",am:"Վերջնական վճարում",icon:"✅",color:"#1450a0",bg:"#e8f0fc",fields:["pct","trigger"],dt:"FinalAcceptance",dc:"RemainingBalance"},
+  {code:"AdvanceRecovery",en:"Advance Recovery",am:"Կանխավճարի մարում",icon:"↩",color:"#9b2121",bg:"#fceaea",fields:["fixed","trigger"],dt:"ActApproved",dc:"FixedAmount"},
 ];
 const TRIGS=["ContractSigned","PhaseCompleted","ActApproved","GoodsDelivered","InstallationCompleted","FinalAcceptance","DLPExpired","MonthElapsed","DateReached"];
 const CALCS=["PercentOfContract","PercentOfPhase","FixedAmount","ActValue","RemainingBalance","PercentOfAct"];
@@ -388,7 +388,7 @@ const fmtC=(v,c)=>{
 };
 
 const TMPLS=[
-  {id:"t1",name:"Advance – Acts – Retention",am:"Kanкh – Akt – Pahelu",icon:"📐",
+  {id:"t1",name:"Advance – Acts – Retention",am:"Կանխավճար – ակտ – պահում",icon:"📐",
    seeds:{order:{num:"PO-2024-0041",vendor:"ArmenBuild LLC",val:50000000,cur:"AMD",variable:false},
     hasPhases:true,
     phases:[
@@ -407,9 +407,9 @@ const TMPLS=[
       {t:"RetentionRelease",l:"Warranty Retention Release",c:"RemainingBalance",tr:"FinalAcceptance"},
       {t:"RetentionRelease",l:"DLP Release",c:"RemainingBalance",tr:"DLPExpired"},
     ],
-    notes:"10% advance + 6 progress acts across 3 construction phases, 10% retention on each act, dual retention release."
+    notes:"10% կանխավճար + 6 միջանկյալ ակտ՝ 3 շինարարական փուլերով, յուրաքանչյուր ակտի վրա 10% պահում, պահման երկփուլ ազատում։"
   }},
-  {id:"t2",name:"Phased Schedule",am:"Fazavayn Grafik",icon:"🗂",
+  {id:"t2",name:"Phased Schedule",am:"Փուլային գրաֆիկ",icon:"🗂",
    seeds:{order:{num:"PO-2024-0042",vendor:"DesignLab CJSC",val:24000000,cur:"AMD",variable:false},
     hasPhases:true,
     phases:[
@@ -428,9 +428,9 @@ const TMPLS=[
       {t:"InterimAdvance",l:"Phase 3 Interim",c:"PercentOfPhase",p:30,tr:"PhaseCompleted",ph:"Phase 3 – Construction Docs"},
       {t:"MilestonePayment",l:"Phase 3 Milestone",c:"PercentOfPhase",p:50,tr:"PhaseCompleted",ph:"Phase 3 – Construction Docs"},
     ],
-    notes:"3 independent phases, each split 20% advance / 30% interim / 50% milestone."
+    notes:"3 անկախ փուլ, յուրաքանչյուրը բաժանված՝ 20% կանխավճար / 30% միջանկյալ / 50% փուլային վճարում։"
   }},
-  {id:"t3",name:"Complex Multi-Currency",am:"Bazmadram Grafik",icon:"💱",
+  {id:"t3",name:"Complex Multi-Currency",am:"Բազմարժութային գրաֆիկ",icon:"💱",
    seeds:{order:{num:"PO-2024-0043",vendor:"TechEquip GmbH",val:280000,cur:"USD",variable:false},
     hasPhases:true,
     phases:[
@@ -451,9 +451,9 @@ const TMPLS=[
       {t:"RetentionRelease",l:"DLP Release",c:"RemainingBalance",tr:"DLPExpired",ic:"USD",sc:"AMD",fx:395,ph:"Phase 4 – Closeout & DLP"},
       {t:"AdvanceRecovery",l:"Advance Recovery",c:"FixedAmount",tr:"FinalAcceptance",ph:"Phase 4 – Closeout & DLP"},
     ],
-    notes:"USD invoicing, AMD settlement. FX locked at 395. 4 phases: mobilization, delivery, installation, closeout."
+    notes:"Հաշիվը՝ USD, վճարումը՝ AMD։ Փոխարժեքը ֆիքսված է 395։ 4 փուլ՝ մոբիլիզացիա, մատակարարում, մոնտաժ, փակում։"
   }},
-  {id:"t4",name:"Monthly Schedule",am:"Amsakan Grafik",icon:"📅",
+  {id:"t4",name:"Monthly Schedule",am:"Ամսական գրաֆիկ",icon:"📅",
    seeds:{order:{num:"PO-2024-0044",vendor:"SecureGuard LLC",val:12000000,cur:"AMD",variable:false},
     hasPhases:false,phases:[],
     lines:[
@@ -464,7 +464,7 @@ const TMPLS=[
       {t:"RecurringMonthlyPayment",l:"Monthly Payment – Month 4",c:"PercentOfContract",p:20,tr:"MonthElapsed",m:4},
       {t:"FinalPayment",l:"Final Payment",c:"PercentOfContract",p:10,tr:"FinalAcceptance"},
     ],
-    notes:"10% advance + 4 equal monthly payments (20%) + 10% final payment."
+    notes:"10% կանխավճար + 4 հավասար ամսական վճարում (20%) + 10% վերջնական վճարում։"
   }},
 ];
 
@@ -473,31 +473,31 @@ const I={
   EN:{t:"Payment Schedule Constructor",s1:"Order",s2:"Phases",s3:"Lines",s4:"Preview",
     onum:"Order Number",ven:"Vendor",val:"Total Value",cur:"Currency",vr:"Variable Value",
     sel:"Select Template",no:"Blank / No Template",hp:"Has Phases",phn:"Phase Name",phv:"Phase Value",
-    ap:"+ Add Phase",al:"+ Add Line",lbl:"Label",calc:"Calc Method",trg:"Trigger",
+    ap:"+ Ավելացնել Phase",al:"+ Ավելացնել Line",lbl:"Label",calc:"Calc Method",trg:"Trigger",
     ret:"Retention %",ded:"Advance Deduction",pct:"Percentage %",fx2:"Fixed Amount",
     fxr:"FX Rate",ic:"Invoice Currency",sc2:"Settlement Currency",ph:"Phase",
-    sch:"Scheduled",usch:"Unscheduled",rest:"Est. Retention",svt:"Save Template",
+    sch:"Scheduled",usch:"Unscheduled",rest:"Est. Retention",svt:"Պահպանել Template",
     nxt:"Next →",bk2:"← Back",fin:"Confirm & Activate",pk:"Select payment line type",
-    bk3:"Bulk Add",mos:"months",lns:"lines",lbr:"Line Breakdown",pal:"Phase Allocation",
+    bk3:"Bulk Ավելացնել",mos:"months",lns:"lines",lbr:"Line Breakdown",pal:"Phase Allocation",
     anl:"Analytics",dst:"Payment Distribution",sm:"Order Summary",sched:"Payment Schedule",
     applied:"Template applied",seeded:"Seeded from",
   },
-  AM:{t:"Vcharayin Grafiki Karu'ich",s1:"Patver",s2:"Fazaer",s3:"Grger",s4:"Nakatatess",
-    onum:"Patveragri Hamar",ven:"Matakarar",val:"Yendar Arvek",cur:"Arvuyt",vr:"Pokhokhakan",
-    sel:"Yntrel Kakapar",no:"Depk Ches",hp:"Uner Fazaer",phn:"Fazayi Anvanoom",phv:"Fazayi Arvek",
-    ap:"+ Faza",al:"+ Gits",lbl:"Nshum",calc:"Hashvark",trg:"Yelaketi",
-    ret:"Pahelu %",ded:"Kanкh Marman",pct:"Tokos %",fx2:"Fiks Gumar",
-    fxr:"Pokhararzhek",ic:"Hashi Arvuyt",sc2:"Vchayman Arvuyt",ph:"Faza",
-    sch:"Tzragr'vats",usch:"Chunks'",rest:"Kut. Pahelu",svt:"Pahel Kakapar",
-    nxt:"Hadjord →",bk2:"← Nakord",fin:"Hashtvarts'nel",pk:"Yntrel vchayin gitsi tesakin",
-    bk3:"Khmb. Avelats'",mos:"amis",lns:"gits",lbr:"Gtseri Bashes",pal:"Fazayi Bazash",
-    anl:"Varlukagrutyun",dst:"Vchayin Basegh",sm:"Patveragri Amfofjum",sched:"Vchayin Grafik",
-    applied:"Kakapary kirarutyun",seeded:"Kakapary",
+  AM:{t:"Վճարման գրաֆիկի կառուցող",s1:"Պատվեր",s2:"Փուլեր",s3:"Տողեր",s4:"Նախադիտում",
+    onum:"Պատվերի համար",ven:"Մատակարար",val:"Ընդհանուր արժեք",cur:"Արժույթ",vr:"Փոփոխական արժեք",
+    sel:"Ընտրել ձևանմուշ",no:"Դատարկ / առանց ձևանմուշի",hp:"Ունի փուլեր",phn:"Փուլի անվանում",phv:"Փուլի արժեք",
+    ap:"+ Ավելացնել փուլ",al:"+ Ավելացնել տող",lbl:"Անվանում",calc:"Հաշվարկի մեթոդ",trg:"Գործարկող իրադարձություն",
+    ret:"Պահման %",ded:"Կանխավճարի մարում",pct:"Տոկոս %",fx2:"Ֆիքսված գումար",
+    fxr:"Փոխարժեք",ic:"Հաշվի արժույթ",sc2:"Վճարման արժույթ",ph:"Փուլ",
+    sch:"Պլանավորված",usch:"Չպլանավորված",rest:"Կուտ. պահում",svt:"Պահպանել ձևանմուշը",
+    nxt:"Հաջորդ →",bk2:"← Նախորդ",fin:"Հաստատել և ակտիվացնել",pk:"Ընտրել վճարման տողի տեսակը",
+    bk3:"Խմբ. ավելացում",mos:"ամիս",lns:"տող",lbr:"Տողերի բաշխում",pal:"Փուլերի բաշխում",
+    anl:"Վերլուծություն",dst:"Վճարումների բաշխում",sm:"Պատվերի ամփոփում",sched:"Վճարման գրաֆիկ",
+    applied:"Կիրառված ձևանմուշ",seeded:"Ձևանմուշ",
   }
 };
 
 // App state
-let lang="EN",step=0;
+let lang="AM",step=0;
 let order={num:"",vendor:"",val:50000000,cur:"AMD",variable:false,tmpl:null};
 let hasPhases=false,phases=[],lines=[];
 let savedTemplates=[],appliedTmpl=null;
@@ -606,11 +606,11 @@ function rSidebar(){
   const t=I[lang],sb=h("div",{className:"sidebar"});
   sb.appendChild(h("div",{className:"sbt"},t.anl));
   const pct=totalPct(),cls=pct>100?"e":pct===100?"ok":"w";
-  [[t.onum+" Value",fmtC(order.val,order.cur),""],
+  [[t.val,fmtC(order.val,order.cur),""],
    [t.sch,pct.toFixed(1)+"%",cls],
    [t.usch,(100-pct).toFixed(1)+"%",pct>100?"e":"w"],
    [t.rest,fmtC(Math.round(retEst()),order.cur),""],
-   ["Lines",String(lines.length),""]
+   [t.lns||"Lines",String(lines.length),""]
   ].forEach(([l,v,c])=>{
     const r=h("div",{className:"sbr"});
     r.appendChild(h("div",{className:"sbl"},l));
@@ -679,22 +679,22 @@ function rStep1(){
 
   const c2=h("div",{className:"card"});
   c2.appendChild(h("div",{className:"ct"},"🗂 "+t.sel));
-  c2.appendChild(h("div",{style:"font-size:12px;color:var(--text3);margin-bottom:6px"},"Selecting a template seeds all steps: order details, phases, and payment lines."));
+  c2.appendChild(h("div",{style:"font-size:12px;color:var(--text3);margin-bottom:6px"},"Ձևանմուշ ընտրելիս լրացվում են բոլոր քայլերը՝ պատվերի տվյալները, փուլերը և վճարման տողերը։"));
   const tg=h("div",{className:"tg"});
   const bc=h("div",{className:"tc"+(order.tmpl===null?" sel":""),onClick:()=>{order.tmpl=null;appliedTmpl=null;lines=[];hasPhases=false;phases=[];render()}});
   bc.appendChild(h("div",{className:"ti"},"✦"));
   bc.appendChild(h("div",{className:"tn"},t.no));
-  bc.appendChild(h("div",{className:"ts"},"0 lines"));
+  bc.appendChild(h("div",{className:"ts"},"0 տող"));
   tg.appendChild(bc);
   all.forEach(tmpl=>{
     const s=tmpl.seeds;
     const tc=h("div",{className:"tc"+(order.tmpl===tmpl.id?" sel":""),onClick:()=>{applyTemplate(tmpl);render()}});
     tc.appendChild(h("div",{className:"ti"},tmpl.icon));
     tc.appendChild(h("div",{className:"tn"},tmpl.name));
-    tc.appendChild(h("div",{className:"ts"},s.lines.length+" lines"+(s.hasPhases?" · "+s.phases.length+"ph":"")));
+    tc.appendChild(h("div",{className:"ts"},((s.lines||[]).length)+" տող"+(s.hasPhases?" · "+((s.phases||[]).length)+" փուլ":"")));
     const dots=h("div",{className:"tc-steps"});
     if(s.order.vendor){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--amber-mid)"}));d.appendChild(tx(s.order.vendor));dots.appendChild(d);}
-    if(s.hasPhases){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--blue-lt)"}));d.appendChild(tx(s.phases.length+" phases"));dots.appendChild(d);}
+    if(s.hasPhases){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--blue-lt)"}));d.appendChild(tx(s.phases.length+" փուլ"));dots.appendChild(d);}
     if(s.order.cur!=="AMD"){const d=h("div",{className:"tc-step"});d.appendChild(h("div",{className:"tc-dot",style:"background:var(--teal)"}));d.appendChild(tx(s.order.cur));dots.appendChild(d);}
     tc.appendChild(dots);
     tg.appendChild(tc);
@@ -740,7 +740,7 @@ function rStep2(){
     const msg=`Total: ${fmtC(pt,order.cur)} / ${fmtC(order.val,order.cur)}`+(Math.abs(diff)<1?" ✓ Balanced":diff>0?` ↑ Over by ${fmtC(diff,order.cur)}`:`  Under by ${fmtC(-diff,order.cur)}`);
     pl.appendChild(h("div",{className:"ph-valid "+vcls},msg));
     wrap.appendChild(pl);
-    const addBtn=btn(t.ap,"",()=>{phases.push({id:nid(),name:"Phase "+(phases.length+1),val:0});render()});
+    const addBtn=btn(t.ap,"",()=>{phases.push({id:nid(),name:(lang==="AM"?"Փուլ ":"Phase ")+(phases.length+1),val:0});render()});
     addBtn.style.marginTop="10px";
     wrap.appendChild(addBtn);
   }
@@ -827,8 +827,8 @@ function rStep3(){
   bi.addEventListener("input",e=>{bulkCount=Math.max(1,parseInt(e.target.value)||1);});
   bulk.appendChild(bs);bulk.appendChild(bi);
   bulk.appendChild(h("span",{style:"font-size:12px;color:var(--text3)"},t.lns));
-  bulk.appendChild(btn("Add","bsm",()=>{
-    for(let i=0;i<bulkCount;i++){const l=mkLine(bulkType);l.label=getLT(bulkType).en+" "+(linesOf(bulkType)+1);l.exp=false;lines.push(l);}
+  bulk.appendChild(btn("Ավելացնել","bsm",()=>{
+    for(let i=0;i<bulkCount;i++){const l=mkLine(bulkType);l.label=(lang==="AM" && getLT(bulkType).am ? getLT(bulkType).am : getLT(bulkType).en)+" "+(linesOf(bulkType)+1);l.exp=false;lines.push(l);}
     render();
   }));
   bulk.appendChild(h("div",{style:"flex:1"}));
@@ -836,7 +836,7 @@ function rStep3(){
   wrap.appendChild(bulk);
 
   if(!lines.length){
-    wrap.appendChild(h("div",{className:"empty"},"No payment lines yet. Pick a template in Step 1 or use \"+ Add Line\"."));
+    wrap.appendChild(h("div",{className:"empty"},"No payment տող yet. Pick a template in Step 1 or use \"+ Ավելացնել Line\"."));
   } else {
     const ll=h("div",{className:"ll"});
     lines.forEach((l,i)=>ll.appendChild(rLineCard(l,i)));
@@ -892,7 +892,7 @@ function rStep4(){
   const c2=h("div",{className:"card"});
   c2.appendChild(h("div",{className:"ct"},"💳 "+t.sched+" ("+lines.length+")"));
   if(!lines.length){
-    c2.appendChild(h("div",{style:"color:var(--text3);font-size:12px;padding:12px 0"},"No payment lines configured."));
+    c2.appendChild(h("div",{style:"color:var(--text3);font-size:12px;padding:12px 0"},"Վճարման տողեր կազմաձևված չեն։"));
   } else {
     const tw=h("div",{style:"overflow-x:auto"});
     const tbl=h("table",{className:"ptbl"});
@@ -921,7 +921,7 @@ function rStep4(){
 
   if(lines.some(l=>l.pct)){
     const wc=h("div",{className:"card"});
-    wc.appendChild(h("div",{className:"ct"},"📊 Cash Flow Distribution"));
+    wc.appendChild(h("div",{className:"ct"},"📊 Կանխիկ հոսքերի բաշխում"));
     const tot=totalPct();
     lines.forEach(l=>{
       const lt=getLT(l.type),pct=l.pct||0,bw=tot>0?(pct/Math.max(tot,100))*100:0;
@@ -938,7 +938,7 @@ function rStep4(){
   const fn=h("div",{className:"fn"});
   fn.appendChild(btn("⭐ "+t.svt,"",()=>{showSave=true;render();}));
   fn.appendChild(btn("✓ "+t.fin,"bp",()=>{
-    const msg=`Schedule confirmed!\n\nOrder: ${order.num}\nVendor: ${order.vendor}\nValue: ${fmtC(order.val,order.cur)}\nLines: ${lines.length}${hasPhases?"\nPhases: "+phases.length:""}`;
+    const msg=`Գրաֆիկը հաստատված է։\n\nՊատվեր՝ ${order.num}\nՄատակարար՝ ${order.vendor}\nԱրժեք՝ ${fmtC(order.val,order.cur)}\nՏողեր՝ ${lines.length}${hasPhases?"\nՓուլեր՝ "+phases.length:""}`;
     alert(msg);
   }));
   wrap.appendChild(fn);
@@ -952,7 +952,7 @@ function rPalette(){
   const modal=h("div",{className:"modal",onClick:e=>e.stopPropagation()});
   const mh=h("div",{className:"mh"});
   mh.appendChild(h("div",{className:"mt"},t.pk));
-  mh.appendChild(btn("✕ Close","bsm",()=>{showPalette=false;render();}));
+  mh.appendChild(btn("✕ Փակել","bsm",()=>{showPalette=false;render();}));
   modal.appendChild(mh);
   const pg=h("div",{className:"pg"});
   LT.forEach(lt=>{
@@ -961,7 +961,7 @@ function rPalette(){
     const td=h("div",{});
     td.appendChild(h("div",{className:"pin"},lt.en));
     td.appendChild(h("div",{className:"piam"},lt.am));
-    td.appendChild(h("div",{className:"pid"},"Fields: "+lt.fields.join(", ")));
+    td.appendChild(h("div",{className:"pid"},"Դաշտեր՝ "+lt.fields.join(", ")));
     pi.appendChild(ico);pi.appendChild(td);pg.appendChild(pi);
   });
   modal.appendChild(pg);ov.appendChild(modal);return ov;
@@ -974,11 +974,11 @@ function rSaveModal(){
   const box=h("div",{className:"save-box",onClick:e=>e.stopPropagation()});
   box.appendChild(h("div",{style:"font-size:15px;font-weight:600"},"⭐ "+t.svt));
   const ni=inp(saveName,v=>{saveName=v;},"text",{placeholder:"e.g. Standard Subcontractor"});
-  box.appendChild(fld("Template Name",ni));
-  box.appendChild(h("div",{style:"font-size:12px;color:var(--text3)"},"Saves "+lines.length+" lines"+(hasPhases?", "+phases.length+" phases":"")+". Appears in template picker for future orders."));
+  box.appendChild(fld("Ձևանմուշի անվանում",ni));
+  box.appendChild(h("div",{style:"font-size:12px;color:var(--text3)"},"Պահպանում է "+lines.length+" տող"+(hasPhases?", "+phases.length+" փուլ":"")+"։ Կերևա ձևանմուշների ցանկում հետագա պատվերների համար։"));
   const btns=h("div",{style:"display:flex;gap:8px;justify-content:flex-end"});
-  btns.appendChild(btn("Cancel","",()=>{showSave=false;render();}));
-  btns.appendChild(btn("Save","bp",()=>{
+  btns.appendChild(btn("Չեղարկել","",()=>{showSave=false;render();}));
+  btns.appendChild(btn("Պահպանել","bp",()=>{
     if(!saveName.trim())return;
     savedTemplates.push({
       id:"c"+Date.now(),name:saveName,am:saveName,icon:"⭐",
@@ -987,7 +987,7 @@ function rSaveModal(){
         hasPhases,
         phases:phases.map(({name,val})=>({name,val})),
         lines:lines.map(l=>({t:l.type,l:l.label,c:l.calc,p:l.pct,tr:l.trigger,r:l.ret,dd:l.ded,dr:l.dedR,ic:l.ic,sc:l.sc,fx:l.fx,m:l.months,ph:l.phase})),
-        notes:"Custom template — saved "+new Date().toLocaleDateString()
+        notes:"Օգտագործողի ձևանմուշ — պահպանվել է "+new Date().toLocaleDateString()
       }
     });
     saveName="";showSave=false;render();
